@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlaw Motorsports & Recovery</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-matte: #121212;
+            --bg-card: #1e1e1e;
+            --bg-metallic: #2a2a2a;
+            --accent-orange: #ff6b00;
+            --accent-yellow: #e6b800;
+            --text-light: #f0f0f0;
+            --text-muted: #a0a0a0;
+            --border-color: #3a3a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-matte);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle, rgba(0,0,0,0.7) 0%, rgba(18,18,18,0.95) 100%),
+                repeating-linear-gradient(45deg, rgba(255,107,0,0.03) 0, rgba(255,107,0,0.03) 10px, transparent 0, transparent 20px);
+        }
+
+        /* HERO / BANNER */
+        .hero-banner {
+            position: relative;
+            background: #1e1e1e center/cover no-repeat;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-bottom: 4px solid var(--accent-orange);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(18,18,18,0.6) 0%, rgba(18,18,18,0.9) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .brand-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+        }
+
+        .brand-title span {
+            color: var(--accent-orange);
+        }
+
+        /* STATUS BANNER */
+        .status-banner {
+            background: rgba(42, 42, 42, 0.9);
+            border: 2px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .status-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .status-open { color: #00ff66; background-color: #00ff66; }
+        .status-call { color: var(--accent-yellow); background-color: var(--accent-yellow); }
+        .status-closed { color: #ff3333; background-color: #ff3333; }
+
+        .status-controls {
+            margin-left: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .status-btn {
+            background: var(--bg-matte);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .status-btn:hover {
+            color: #fff;
+            border-color: var(--accent-orange);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: relative;
+            z-index: 2;
+            background: rgba(18, 18, 18, 0.95);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--accent-orange);
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            padding: 16px 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--accent-orange);
+            background: rgba(255, 107, 0, 0.05);
+            border-bottom-color: var(--accent-orange);
+        }
+
+        .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-right: 15px;
+        }
+
+        .discord-login-btn {
+            background: #5865F2;
+            color: white !important;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .discord-login-btn:hover {
+            background: #4752C4;
+        }
+
+        .discord-user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(42, 42, 42, 0.8);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .discord-user-badge span {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+
+        .logout-btn:hover {
+            color: #ff3333;
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex-grow: 1;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tab-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--accent-orange);
+            letter-spacing: 1px;
+        }
+
+        /* EDITABLE CONTROLS */
+        .edit-protected[contenteditable="true"] {
+            outline: 1px dashed var(--accent-yellow);
+            padding: 4px;
+            background: rgba(230, 184, 0, 0.05);
+        }
+
+        /* HIDE EDIT CONTROLS WHEN READ-ONLY */
+        body.read-only .edit-control,
+        body.read-only .card-delete-btn,
+        body.read-only .upload-btn-wrapper,
+        body.read-only .status-controls,
+        body.read-only .bg-change-btn {
+            display: none !important;
+        }
+
+        .btn {
+            background: var(--accent-orange);
+            color: #000;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: #e05e00;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: var(--bg-metallic);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: #3a3a3a;
+        }
+
+        .btn-danger {
+            background: #ff3333;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #cc0000;
+        }
+
+        /* GRID CARDS */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--bg-metallic);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card-img-container {
+            height: 180px;
+            background: #121212;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-body {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: var(--accent-yellow);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .upload-btn-wrapper {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            font-size: 0px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .card-delete-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 51, 51, 0.8);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        /* TABLES */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: var(--bg-metallic);
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: #181818;
+            color: var(--accent-orange);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        /* PARTNER LOGOS */
+        .partners-section {
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .partner-card {
+            background: var(--bg-metallic);
+            border: 1px dashed var(--border-color);
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* EMPLOYEE PORTAL LOCKED STATE */
+        .portal-lock {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .portal-lock i {
+            font-size: 4rem;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+        }
+
+        /* FOOTER & DISCLAIMER */
+        footer {
+            background: #0a0a0a;
+            border-top: 2px solid var(--border-color);
+            padding: 30px 20px;
+            margin-top: auto;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-disclaimer {
+            max-width: 800px;
+            margin: 0 auto 15px auto;
+            padding: 10px;
+            border: 1px solid #3a2020;
+            background: rgba(50, 0, 0, 0.2);
+            color: #d88;
+            border-radius: 4px;
+        }
+
+        .bg-change-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 5;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--accent-orange);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .bg-change-btn input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* SAVING INDICATOR */
+        #saveNotification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-orange);
+            color: #000;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 4px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .role-badge {
+            background: rgba(255, 107, 0, 0.2);
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="read-only">
+
+    <div id="saveNotification"><i class="fa-solid fa-floppy-disk"></i> Changes Saved!</div>
+
+    <!-- HERO / BANNER AREA -->
+    <header class="hero-banner" id="heroBanner">
+        <div class="hero-overlay"></div>
+        
+        <div class="hero-content">
+            <div>
+                <h1 class="brand-title">OUTLAW <span>MOTORSPORTS</span> & RECOVERY</h1>
+                <p style="color: #ccc; letter-spacing: 2px; font-weight: 600;">ROUGH AROUND THE EDGES. HIGH ON PERFORMANCE.</p>
+            </div>
+
+            <!-- LIVE SHOP STATUS BANNER -->
+            <div class="status-banner">
+                <span id="statusIndicator" class="status-indicator status-open"></span>
+                <span id="statusText">GARAGE OPEN</span>
+                <div class="status-controls">
+                    <button class="status-btn" onclick="setStatus('open')" title="Set Open"><i class="fa-solid fa-check"></i></button>
+                    <button class="status-btn" onclick="setStatus('call')" title="Set On Call"><i class="fa-solid fa-phone"></i></button>
+                    <button class="status-btn" onclick="setStatus('closed')" title="Set Closed"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <label class="bg-change-btn">
+            <i class="fa-solid fa-camera"></i> Change Header BG
+            <input type="file" id="bgUploader" accept="image/*">
+        </label>
+    </header>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home</li>
+                <li class="nav-item" onclick="switchTab('roster')"><i class="fa-solid fa-users"></i> Roster</li>
+                <li class="nav-item" onclick="switchTab('tow')"><i class="fa-solid fa-truck-pickup"></i> Tow Fleet</li>
+                <li class="nav-item" onclick="switchTab('pricing')"><i class="fa-solid fa-tags"></i> Pricing</li>
+                <li class="nav-item" onclick="switchTab('memberships')"><i class="fa-solid fa-id-card"></i> Discounts</li>
+                <li class="nav-item" onclick="switchTab('raceteam')"><i class="fa-solid fa-flag-checkered"></i> Race Team</li>
+                <li class="nav-item" onclick="switchTab('contact')"><i class="fa-solid fa-location-dot"></i> Location</li>
+                <li class="nav-item" onclick="switchTab('portal')" style="color: var(--accent-yellow);"><i class="fa-solid fa-lock"></i> Employee Portal</li>
+            </ul>
+            
+            <div class="nav-right-group">
+                <!-- Discord Login Container -->
+                <div id="discordAuthContainer">
+                    <button class="discord-login-btn" onclick="loginWithDiscord()">
+                        <i class="fa-brands fa-discord"></i> Login with Discord
+                    </button>
+                </div>
+
+                <a href="https://discord.gg/VWgSYSuMyM" target="_blank" class="discord-login-btn" style="background: var(--bg-metallic); border: 1px solid var(--border-color);">
+                    <i class="fa-solid fa-user-plus"></i> Join
+                </a>
+
+                <button class="btn btn-danger edit-control" style="margin: 8px;" onclick="resetSiteData()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINERS -->
+    <main class="main-container">
+
+        <!-- 1. HOME TAB -->
+        <section id="tab-home" class="tab-content active">
+            <div class="tab-header">
+                <h2 class="tab-title">WELCOME TO OUTLAW MOTORSPORTS & RECOVERY</h2>
+            </div>
+            <div id="homeEditableText" class="edit-protected" style="line-height: 1.6; font-size: 1.1rem;">
+                <p style="margin-bottom: 15px;">Whether you're stranded on the highway at 3 AM or looking to gain an edge on the race track, Outlaw Motorsports & Recovery is your primary shop for performance, heavy towing, and custom vehicle builds.</p>
+                <p>We operate fast, hit hard, and build machines that dominate the roads. Explore our services or contact our team directly via our Discord server.</p>
+            </div>
+
+            <div class="partners-section">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--accent-yellow);">AFFILIATES & PARTNERS</h3>
+                    <button class="btn btn-secondary edit-control" onclick="addPartner()"><i class="fa-solid fa-plus"></i> Add Partner</button>
+                </div>
+                <div class="partners-grid" id="partnersGrid">
+                    <div class="partner-card">
+                        <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                        <div class="edit-protected" style="font-weight:bold;">Legal Firm Partner</div>
+                        <div class="edit-protected" style="font-size:0.8rem; color:var(--text-muted);">Preferred Legal Counsel</div>
+                    </div>
+                    <div class="partner-card">
+                        <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                        <div class="edit-protected" style="font-weight:bold;">Local Motorcycle Club</div>
+                        <div class="edit-protected" style="font-size:0.8rem; color:var(--text-muted);">Official Tow Provider</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. EMPLOYEE ROSTER TAB -->
+        <section id="tab-roster" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">EMPLOYEE ROSTER</h2>
+                <button class="btn edit-control" onclick="addCard('rosterGrid', 'Employee Name', 'Title / Rank', 'Contact details or callsign...')"><i class="fa-solid fa-plus"></i> Add Staff</button>
+            </div>
+            <div class="grid-container" id="rosterGrid">
+                <div class="card">
+                    <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                    <div class="card-img-container">
+                        <i class="fa-solid fa-user-gear fa-3x" style="color: #333;"></i>
+                        <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title edit-protected">Jax "Wrench" Reed</div>
+                        <div class="card-subtitle edit-protected">Owner / Head Mechanic</div>
+                        <div class="card-text edit-protected">Specializes in heavy engine tuning and fleet operations. Phone: 555-0192</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. TOW INFORMATION TAB -->
+        <section id="tab-tow" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">TOW FLEET & EQUIPMENT</h2>
+                <button class="btn edit-control" onclick="addCard('towGrid', 'Truck Name/Model', 'Vehicle Class', 'Specifications and payload stats...')"><i class="fa-solid fa-plus"></i> Add Vehicle</button>
+            </div>
+            <div class="grid-container" id="towGrid">
+                <div class="card">
+                    <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                    <div class="card-img-container">
+                        <i class="fa-solid fa-truck-monster fa-3x" style="color: #333;"></i>
+                        <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title edit-protected">Heavy Flatbed Unit</div>
+                        <div class="card-subtitle edit-protected">Class B Recovery</div>
+                        <div class="card-text edit-protected">Equipped for standard vehicle impounds, sports car transports, and off-road recoveries.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. PRICING TAB -->
+        <section id="tab-pricing" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">SERVICE & SHOP PRICING</h2>
+                <button class="btn edit-control" onclick="addTableRow('pricingTable')"><i class="fa-solid fa-plus"></i> Add Row</button>
+            </div>
+            <h3 style="font-family: 'Bebas Neue'; color: var(--accent-yellow); font-size: 1.5rem; margin-top: 15px;">Tow & Recovery Rates</h3>
+            <table class="data-table" id="pricingTable">
+                <thead>
+                    <tr>
+                        <th>Service Description</th>
+                        <th>Standard Rate</th>
+                        <th>Notes / Addons</th>
+                        <th class="edit-control">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="edit-protected">Standard Tow (Local City Zone)</td>
+                        <td class="edit-protected">$500</td>
+                        <td class="edit-protected">Flat rate up to 5 miles</td>
+                        <td class="edit-control"><button class="btn btn-danger" style="padding: 2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td class="edit-protected">Off-Road / Heavy Winch Recovery</td>
+                        <td class="edit-protected">$1,200</td>
+                        <td class="edit-protected">Includes difficult terrain extraction</td>
+                        <td class="edit-control"><button class="btn btn-danger" style="padding: 2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 5. DISCOUNTS & MEMBERSHIPS TAB -->
+        <section id="tab-memberships" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">DISCOUNTS & MEMBERSHIPS</h2>
+                <button class="btn edit-control" onclick="addCard('membershipGrid', 'Membership Tier', 'Discount Rate', 'Perks and requirements...')"><i class="fa-solid fa-plus"></i> Add Tier</button>
+            </div>
+            <div class="grid-container" id="membershipGrid">
+                <div class="card">
+                    <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                    <div class="card-body">
+                        <div class="card-title edit-protected">Outlaw Club Pass</div>
+                        <div class="card-subtitle edit-protected">15% Off All Shop Repairs</div>
+                        <div class="card-text edit-protected">Available for affiliated car club members and frequent patrons. Includes priority towing response.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. RACE TEAM INFORMATION TAB -->
+        <section id="tab-raceteam" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">OUTLAW RACE TEAM</h2>
+                <button class="btn edit-control" onclick="addCard('raceGrid', 'Race Car / Driver', 'Class', 'Performance details...')"><i class="fa-solid fa-plus"></i> Add Entry</button>
+            </div>
+            <p id="raceEditableText" class="edit-protected" style="margin-bottom: 20px;">We don't just build vehicles; we race them. Check out our active motorsports roster and track records below.</p>
+            <div class="grid-container" id="raceGrid">
+                <div class="card">
+                    <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                    <div class="card-img-container">
+                        <i class="fa-solid fa-flag-checkered fa-3x" style="color: #333;"></i>
+                        <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-title edit-protected">The Ironclad Drift Spec</div>
+                        <div class="card-subtitle edit-protected">Class A Track Unit</div>
+                        <div class="card-text edit-protected">Custom twin-turbo V8 engine setup built entirely in-house. Driven by Reed.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. LOCATION & CONTACT TAB -->
+        <section id="tab-contact" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title">LOCATION & CONTACT</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div id="contactEditableText" class="edit-protected">
+                    <h3 style="color: var(--accent-orange); font-family: 'Bebas Neue'; font-size: 1.8rem;">MAIN WORKSHOP</h3>
+                    <p style="margin-top: 10px;">Industrial District, Bay 9</p>
+                    <p>Poplar Street / Docks Highway</p>
+                    <p style="margin-top: 15px;"><strong>Dispatch Line:</strong> 555-OUTLAW</p>
+                    <p><strong>Radio Frequency:</strong> 412.5 MHz</p>
+                </div>
+                <div style="background: var(--bg-metallic); padding: 20px; border-radius: 4px; border: 1px solid var(--border-color);">
+                    <h3 style="font-family: 'Bebas Neue'; font-size: 1.5rem; color: var(--accent-yellow); margin-bottom: 10px;">COMMUNITY DISCORD</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 15px;">Join our server for tow requests, custom build appointments, and racing events.</p>
+                    <a href="https://discord.gg/VWgSYSuMyM" target="_blank" class="btn" style="width: 100%; justify-content: center;"><i class="fa-brands fa-discord"></i> Open Discord Invite</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. RESTRICTED EMPLOYEE PORTAL -->
+        <section id="tab-portal" class="tab-content">
+            <div class="tab-header">
+                <h2 class="tab-title"><i class="fa-solid fa-user-shield"></i> RESTRICTED EMPLOYEE PORTAL</h2>
+            </div>
+            
+            <div id="portalLocked" class="portal-lock">
+                <i class="fa-solid fa-lock"></i>
+                <h3 style="font-family: 'Bebas Neue'; font-size: 2rem; margin-bottom: 10px;">STAFF AUTHORIZATION REQUIRED</h3>
+                <p id="portalMessage" style="color: var(--text-muted); margin-bottom: 20px;">Edit access is strictly restricted to authorized staff members with Role ID: 1532629472782843996.</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <button class="discord-login-btn" onclick="loginWithDiscord()" style="font-size: 1.3rem; padding: 10px 20px;">
+                        <i class="fa-brands fa-discord"></i> Authenticate via Discord
+                    </button>
+                </div>
+            </div>
+
+            <!-- Portal Unlocked View -->
+            <div id="portalUnlocked" style="display: none;">
+                <h3 style="font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--accent-yellow); margin-bottom: 15px;">INTERNAL OPERATIONAL DOCUMENTS</h3>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Confidential internal records, employee guides, and shop protocols.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <div style="background: var(--bg-metallic); padding: 15px; border-radius: 4px; border-left: 4px solid var(--accent-orange);">
+                        <h4>Standard Operating Procedures</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Towing, vehicle impoundment, and emergency dispatch protocols.</p>
+                    </div>
+                    <div style="background: var(--bg-metallic); padding: 15px; border-radius: 4px; border-left: 4px solid var(--accent-yellow);">
+                        <h4>Employee Payroll & Rates</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Commission breakdown for completed tow calls and performance upgrades.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-disclaimer">
+            <strong>OFFICIAL DISCLAIMER:</strong> Outlaw Motorsports & Recovery is a virtual entity operating within a Grand Theft Auto V (FiveM) multiplayer roleplay environment. All services, currency, locations, and personnel are entirely fictional.
+        </div>
+        <p>&copy; 2026 Outlaw Motorsports & Recovery. All rights reserved.</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DISCORD OAUTH & WORKER CONFIGURATION
+        const DISCORD_CLIENT_ID = "1534336806676594828"; // Replace with your Discord Application Client ID
+        const DISCORD_GUILD_ID = "714606988675252244";   // Replace with your Discord Server ID
+        const REQUIRED_ROLE_ID = "1532629472782843996";
+        const WORKER_URL = "https://discord-role-check.tywyv9.workers.dev/"; // Replace with your Cloudflare Worker URL
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+
+            const activeNav = Array.from(document.querySelectorAll('.nav-item')).find(el => 
+                el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${tabId}'`)
+            );
+            if (activeNav) activeNav.classList.add('active');
+        }
+
+        // Discord OAuth Login Redirect
+        function loginWithDiscord() {
+            const currentUrl = window.location.origin + window.location.pathname;
+            const redirectUri = encodeURIComponent(currentUrl);
+            // MUST include both identify and guilds.members.read
+            const scope = encodeURIComponent("identify guilds.members.read");
+    
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+        }
+
+        // Backend Role Verification via Cloudflare Worker
+        async function checkDiscordAuth() {
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const accessToken = fragment.get('access_token') || localStorage.getItem('discord_access_token');
+
+            if (!accessToken) {
+                setReadOnlyMode(true);
+                return;
+            }
+
+            localStorage.setItem('discord_access_token', accessToken);
+
+            try {
+                // Send token to Cloudflare worker for backend verification
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        accessToken: accessToken,
+                        guildId: DISCORD_GUILD_ID,
+                        roleId: REQUIRED_ROLE_ID
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.error || !data.user) {
+                    throw new Error(data.error || "Verification failed");
+                }
+
+                renderUserBadge(data.user, data.isAuthorized);
+                setReadOnlyMode(!data.isAuthorized);
+
+                if (data.isAuthorized) {
+                    document.getElementById('portalLocked').style.display = 'none';
+                    document.getElementById('portalUnlocked').style.display = 'block';
+                } else {
+                    document.getElementById('portalMessage').textContent = "ACCESS DENIED: Your account lacks Role ID 1532629472782843996.";
+                    document.getElementById('portalMessage').style.color = "#ff3333";
+                }
+
+            } catch (err) {
+                console.error("Auth verification error:", err);
+                logoutDiscord();
+            }
+        }
+
+        function renderUserBadge(user, isAuthorized) {
+            const avatarUrl = user.avatar 
+                ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` 
+                : 'https://cdn.discordapp.com/embed/avatars/0.png';
+
+            document.getElementById('discordAuthContainer').innerHTML = `
+                <div class="discord-user-badge">
+                    <img src="${avatarUrl}" style="width: 24px; height: 24px; border-radius: 50%;">
+                    <span>${user.username}</span>
+                    <span class="role-badge" style="${isAuthorized ? '' : 'border-color: #ff3333; color: #ff3333; background: rgba(255,51,51,0.1);'}">
+                        ${isAuthorized ? 'Authorized Staff' : 'Read-Only'}
+                    </span>
+                    <button class="logout-btn" onclick="logoutDiscord()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            `;
+        }
+
+        function setReadOnlyMode(isReadOnly) {
+            if (isReadOnly) {
+                document.body.classList.add('read-only');
+                document.querySelectorAll('.edit-protected').forEach(el => el.removeAttribute('contenteditable'));
+            } else {
+                document.body.classList.remove('read-only');
+                document.querySelectorAll('.edit-protected').forEach(el => el.setAttribute('contenteditable', 'true'));
+            }
+        }
+
+        function logoutDiscord() {
+            localStorage.removeItem('discord_access_token');
+            window.location.href = window.location.href.split('#')[0];
+        }
+
+        // Shop Status Controls
+        function setStatus(status) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+
+            indicator.className = 'status-indicator';
+            if (status === 'open') {
+                indicator.classList.add('status-open');
+                text.textContent = 'GARAGE OPEN';
+            } else if (status === 'call') {
+                indicator.classList.add('status-call');
+                text.textContent = 'ON CALL ONLY';
+            } else if (status === 'closed') {
+                indicator.classList.add('status-closed');
+                text.textContent = 'GARAGE CLOSED';
+            }
+            showSaveNotification();
+        }
+
+        // Add Dynamic Card Elements
+        function addCard(containerId, titlePlaceholder, subtitlePlaceholder, textPlaceholder) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const isReadOnly = document.body.classList.contains('read-only');
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                <div class="card-img-container">
+                    <i class="fa-solid fa-image fa-3x" style="color: #333;"></i>
+                    <div class="upload-btn-wrapper">
+                        <button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button>
+                        <input type="file" accept="image/*" onchange="uploadImage(event, this)">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title edit-protected" contenteditable="${!isReadOnly}">${titlePlaceholder}</div>
+                    <div class="card-subtitle edit-protected" contenteditable="${!isReadOnly}">${subtitlePlaceholder}</div>
+                    <div class="card-text edit-protected" contenteditable="${!isReadOnly}">${textPlaceholder}</div>
+                </div>
+            `;
+            container.appendChild(card);
+            showSaveNotification();
+        }
+
+        // Add Dynamic Table Row
+        function addTableRow(tableId) {
+            const table = document.getElementById(tableId).querySelector('tbody');
+            if (!table) return;
+
+            const isReadOnly = document.body.classList.contains('read-only');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="edit-protected" contenteditable="${!isReadOnly}">New Service Item</td>
+                <td class="edit-protected" contenteditable="${!isReadOnly}">$000</td>
+                <td class="edit-protected" contenteditable="${!isReadOnly}">Details...</td>
+                <td class="edit-control"><button class="btn btn-danger" style="padding: 2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+            `;
+            table.appendChild(row);
+            showSaveNotification();
+        }
+
+        // Add Partner Card
+        function addPartner() {
+            const grid = document.getElementById('partnersGrid');
+            const isReadOnly = document.body.classList.contains('read-only');
+            const card = document.createElement('div');
+            card.className = 'partner-card';
+            card.innerHTML = `
+                <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                <div class="edit-protected" contenteditable="${!isReadOnly}" style="font-weight:bold;">New Partner</div>
+                <div class="edit-protected" contenteditable="${!isReadOnly}" style="font-size:0.8rem; color:var(--text-muted);">Partner Description</div>
+            `;
+            grid.appendChild(card);
+            showSaveNotification();
+        }
+
+        // Remove Elements
+        function removeCard(btn) {
+            btn.closest('.card, .partner-card').remove();
+            showSaveNotification();
+        }
+
+        function removeTableRow(btn) {
+            btn.closest('tr').remove();
+            showSaveNotification();
+        }
+
+        // Image Uploader Handler
+        function uploadImage(event, inputElement) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgContainer = inputElement.closest('.card-img-container');
+                    imgContainer.style.backgroundImage = `url('${e.target.result}')`;
+                    const icon = imgContainer.querySelector('i.fa-3x');
+                    if (icon) icon.style.display = 'none';
+                    showSaveNotification();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Header Background Uploader
+        document.getElementById('bgUploader').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('heroBanner').style.backgroundImage = `url('${event.target.result}')`;
+                    showSaveNotification();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Notification Helper
+        function showSaveNotification() {
+            const toast = document.getElementById('saveNotification');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+
+        // Reset Data Placeholder
+        function resetSiteData() {
+            if (confirm("Reset all customizations to default?")) {
+                location.reload();
+            }
+        }
+
+        // Initialize Authentication on Load
+        window.addEventListener('DOMContentLoaded', checkDiscordAuth);
+    </script>
+</body>
+</html>

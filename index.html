@@ -917,7 +917,7 @@
     <script>
         // ==================== CONFIG ====================
         // Staff PIN to unlock editing
-        const STAFF_PIN = "4242026";
+        const STAFF_PIN = "outlaw";
 
         // Remote shared storage (Cloudflare Worker + KV recommended).
         // Leave empty to use localStorage only (per-browser).
@@ -1025,13 +1025,19 @@
         }
 
         // ==================== STATE CAPTURE / APPLY ====================
+        // Reliably extract url(...) value from a CSS background-image string
+        function extractBgUrl(bg) {
+            if (!bg || bg === 'none') return '';
+            const m = String(bg).match(/url\((['"]?)(.*?)\1\)/);
+            return m ? m[2] : '';
+        }
+
         function getCardData(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return [];
             return Array.from(container.querySelectorAll('.card')).map(card => {
                 const imgEl = card.querySelector('.card-img-container');
-                const bg = imgEl ? imgEl.style.backgroundImage : '';
-                const imgUrl = bg && bg.startsWith('url(') ? bg.slice(5, -2).replace(/^["']|["']$/g, '') : '';
+                const imgUrl = imgEl ? extractBgUrl(imgEl.style.backgroundImage) : '';
                 return {
                     title: card.querySelector('.card-title')?.innerHTML || '',
                     subtitle: card.querySelector('.card-subtitle')?.innerHTML || '',
@@ -1073,8 +1079,8 @@
             else if (statusText.includes('CLOSED')) status = 'closed';
 
             const hero = document.getElementById('heroBanner');
-            const heroBg = hero?.style.backgroundImage || '';
-            const heroUrl = heroBg && heroBg.startsWith('url(') ? heroBg.slice(5, -2).replace(/^["']|["']$/g, '') : '';
+            // Prefer the live style; fall back to last known good value kept in memory
+            const heroUrl = extractBgUrl(hero?.style.backgroundImage || '') || (window.__heroBackground || '');
 
             return {
                 version: 1,
@@ -1125,7 +1131,11 @@
 
             // Hero background
             if (state.heroBackground) {
-                document.getElementById('heroBanner').style.backgroundImage = `url('${state.heroBackground}')`;
+                window.__heroBackground = state.heroBackground;
+                const hero = document.getElementById('heroBanner');
+                // Set full background so CSS shorthand doesn't wipe the image
+                hero.style.background = `center / cover no-repeat url("${state.heroBackground}")`;
+                hero.style.backgroundColor = '#1e1e1e';
             }
 
             // Text blocks
@@ -1198,22 +1208,27 @@
         async function persistState() {
             if (isApplyingState) return;
             const state = captureState();
+            const payload = JSON.stringify(state);
 
             // Always save locally
             try {
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+                localStorage.setItem(LOCAL_STORAGE_KEY, payload);
             } catch (e) {
-                console.warn('localStorage full or unavailable', e);
+                console.warn('localStorage full or unavailable — image may be too large', e);
+                alert('Could not save locally (storage full). Try a smaller background image.');
             }
 
             // Push to shared remote store so all visitors see it
             if (DATA_API_URL) {
                 try {
-                    await fetch(DATA_API_URL, {
+                    const res = await fetch(DATA_API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(state)
+                        body: payload
                     });
+                    if (!res.ok) {
+                        console.warn('Remote save HTTP error', res.status);
+                    }
                 } catch (e) {
                     console.warn('Remote save failed', e);
                 }
@@ -1349,12 +1364,11 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // Resize large images to keep storage size reasonable
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    const maxW = 800;
+                    const maxW = 600;
                     let w = img.width, h = img.height;
                     if (w > maxW) {
                         h = Math.round(h * (maxW / w));
@@ -1364,13 +1378,14 @@
                     canvas.width = w;
                     canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
 
                     const imgContainer = inputElement.closest('.card-img-container');
-                    imgContainer.style.backgroundImage = `url('${dataUrl}')`;
+                    imgContainer.style.backgroundImage = `url("${dataUrl}")`;
                     const icon = imgContainer.querySelector('i.fa-3x');
                     if (icon) icon.style.display = 'none';
-                    scheduleSave();
+                    clearTimeout(saveTimer);
+                    persistState();
                 };
                 img.src = e.target.result;
             };
@@ -1384,7 +1399,8 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    const maxW = 1600;
+                    // Keep hero image small so it fits localStorage + Worker KV reliably
+                    const maxW = 1200;
                     let w = img.width, h = img.height;
                     if (w > maxW) {
                         h = Math.round(h * (maxW / w));
@@ -1394,9 +1410,14 @@
                     canvas.width = w;
                     canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                    document.getElementById('heroBanner').style.backgroundImage = `url('${dataUrl}')`;
-                    scheduleSave();
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.65);
+                    window.__heroBackground = dataUrl;
+                    const hero = document.getElementById('heroBanner');
+                    hero.style.background = `center / cover no-repeat url("${dataUrl}")`;
+                    hero.style.backgroundColor = '#1e1e1e';
+                    // Force immediate save (don't wait for debounce) so refresh keeps it
+                    clearTimeout(saveTimer);
+                    persistState();
                 };
                 img.src = event.target.result;
             };
@@ -1437,3 +1458,4 @@
     </script>
 </body>
 </html>
+

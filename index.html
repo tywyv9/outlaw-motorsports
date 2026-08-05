@@ -829,11 +829,28 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // DISCORD OAUTH & WORKER CONFIGURATION
-        const DISCORD_CLIENT_ID = "1534336806676594828"; // Replace with your Discord Application Client ID
-        const DISCORD_GUILD_ID = "714606988675252244";   // Replace with your Discord Server ID
-        const REQUIRED_ROLE_ID = "1532629472782843996";
-        const WORKER_URL = "https://discord-role-check.tywyv9.workers.dev/"; // Replace with your Cloudflare Worker URL
+       const ADMIN_PIN = "4242026";
+
+function unlockEditing() {
+    const pin = prompt("Enter Admin PIN:");
+
+    if (pin === ADMIN_PIN) {
+        setReadOnlyMode(false);
+        document.getElementById("portalLocked").style.display = "none";
+        document.getElementById("portalUnlocked").style.display = "block";
+        sessionStorage.setItem("editingUnlocked", "true");
+    } else {
+        alert("Incorrect PIN.");
+    }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("editingUnlocked") === "true") {
+        setReadOnlyMode(false);
+        document.getElementById("portalLocked").style.display = "none";
+        document.getElementById("portalUnlocked").style.display = "block";
+    }
+});
 
         // Tab Switching
         function switchTab(tabId) {
@@ -848,26 +865,6 @@
             );
             if (activeNav) activeNav.classList.add('active');
         }
-
-        // Discord OAuth Login Redirect
-        function loginWithDiscord() {
-            const currentUrl = window.location.origin + window.location.pathname;
-            const redirectUri = encodeURIComponent(currentUrl);
-            // MUST include both identify and guilds.members.read
-            const scope = encodeURIComponent("identify guilds.members.read");
-    
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
-        }
-
-        // Backend Role Verification via Cloudflare Worker
-        async function checkDiscordAuth() {
-            const fragment = new URLSearchParams(window.location.hash.slice(1));
-            const accessToken = fragment.get('access_token') || localStorage.getItem('discord_access_token');
-
-            if (!accessToken) {
-                setReadOnlyMode(true);
-                return;
-            }
 
             localStorage.setItem('discord_access_token', accessToken);
 

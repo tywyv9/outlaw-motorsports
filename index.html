@@ -622,16 +622,30 @@
 
     <div id="saveNotification"><i class="fa-solid fa-floppy-disk"></i> Changes Saved!</div>
 
-    <!-- PIN MODAL -->
+    <!-- EDITOR PIN MODAL -->
     <div class="pin-modal-overlay" id="pinModal">
         <div class="pin-modal">
             <h3><i class="fa-solid fa-lock"></i> EDITOR UNLOCK</h3>
-            <p>Enter the staff PIN to unlock editing mode.</p>
+            <p>Enter the editor PIN to unlock full editing mode.</p>
             <div class="pin-error" id="pinError">Incorrect PIN. Try again.</div>
             <input type="password" id="pinInput" maxlength="12" placeholder="••••" autocomplete="off">
             <div class="pin-modal-actions">
                 <button class="btn" onclick="attemptPinUnlock()"><i class="fa-solid fa-unlock"></i> Unlock</button>
                 <button class="btn btn-secondary" onclick="closePinModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTAL VIEW PIN MODAL -->
+    <div class="pin-modal-overlay" id="portalPinModal">
+        <div class="pin-modal">
+            <h3><i class="fa-solid fa-eye"></i> PORTAL ACCESS</h3>
+            <p>Enter the employee portal PIN to view internal documents.</p>
+            <div class="pin-error" id="portalPinError">Incorrect PIN. Try again.</div>
+            <input type="password" id="portalPinInput" maxlength="12" placeholder="••••" autocomplete="off">
+            <div class="pin-modal-actions">
+                <button class="btn" onclick="attemptPortalPinUnlock()"><i class="fa-solid fa-unlock"></i> View</button>
+                <button class="btn btn-secondary" onclick="closePortalPinModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -871,33 +885,53 @@
         <section id="tab-portal" class="tab-content">
             <div class="tab-header">
                 <h2 class="tab-title"><i class="fa-solid fa-user-shield"></i> RESTRICTED EMPLOYEE PORTAL</h2>
+                <button class="btn edit-control" onclick="addCard('portalGrid', 'Document Title', 'Category / Clearance', 'Details, instructions, or notes...')"><i class="fa-solid fa-plus"></i> Add Document</button>
             </div>
             
             <div id="portalLocked" class="portal-lock">
                 <i class="fa-solid fa-lock"></i>
                 <h3 style="font-family: 'Bebas Neue'; font-size: 2rem; margin-bottom: 10px;">STAFF AUTHORIZATION REQUIRED</h3>
-                <p id="portalMessage" style="color: var(--text-muted); margin-bottom: 20px;">Unlock the editor with the staff PIN to access internal documents and operational guides.</p>
+                <p id="portalMessage" style="color: var(--text-muted); margin-bottom: 20px;">Enter the employee portal PIN to view internal documents. Only editors can add, edit, or remove documents.</p>
                 
                 <div style="margin-bottom: 20px;">
-                    <button class="btn" onclick="openPinModal()" style="font-size: 1.2rem; padding: 10px 20px;">
-                        <i class="fa-solid fa-key"></i> Enter Staff PIN
+                    <button class="btn" onclick="openPortalPinModal()" style="font-size: 1.2rem; padding: 10px 20px;">
+                        <i class="fa-solid fa-key"></i> Enter Portal PIN
                     </button>
                 </div>
             </div>
 
             <!-- Portal Unlocked View -->
             <div id="portalUnlocked" style="display: none;">
-                <h3 style="font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--accent-cream); margin-bottom: 15px;">INTERNAL OPERATIONAL DOCUMENTS</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom: 15px;">
+                    <h3 style="font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--accent-cream); margin: 0;">INTERNAL OPERATIONAL DOCUMENTS</h3>
+                    <button class="btn btn-secondary" id="portalLockBtn" onclick="lockPortalView()" style="font-size: 0.9rem;"><i class="fa-solid fa-lock"></i> Lock Portal</button>
+                </div>
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Confidential internal records, employee guides, and shop protocols.</p>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                    <div style="background: var(--bg-metallic); padding: 15px; border-radius: 4px; border-left: 4px solid var(--accent-red);">
-                        <h4>Standard Operating Procedures</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Towing, vehicle impoundment, and emergency dispatch protocols.</p>
+                <div class="grid-container" id="portalGrid">
+                    <div class="card">
+                        <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                        <div class="card-img-container">
+                            <i class="fa-solid fa-file-shield fa-3x" style="color: #333;"></i>
+                            <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title edit-protected">Standard Operating Procedures</div>
+                            <div class="card-subtitle edit-protected">All Staff</div>
+                            <div class="card-text edit-protected">Towing, vehicle impoundment, and emergency dispatch protocols.</div>
+                        </div>
                     </div>
-                    <div style="background: var(--bg-metallic); padding: 15px; border-radius: 4px; border-left: 4px solid var(--accent-cream);">
-                        <h4>Employee Payroll & Rates</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Commission breakdown for completed tow calls and performance upgrades.</p>
+                    <div class="card">
+                        <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                        <div class="card-img-container">
+                            <i class="fa-solid fa-file-invoice-dollar fa-3x" style="color: #333;"></i>
+                            <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-title edit-protected">Employee Payroll & Rates</div>
+                            <div class="card-subtitle edit-protected">Management Only</div>
+                            <div class="card-text edit-protected">Commission breakdown for completed tow calls and performance upgrades.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -916,8 +950,12 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // ==================== CONFIG ====================
-        // Staff PIN to unlock editing
+        // Editor PIN — unlocks full site editing (add/edit/delete everywhere, including the portal)
         const STAFF_PIN = "4242026";
+
+        // Employee Portal PIN — view-only access to the portal's internal documents.
+        // Does NOT grant editing rights; only the editor PIN above can add/edit/delete documents.
+        const PORTAL_PIN = "1738";
 
         // Remote shared storage (Cloudflare Worker + KV recommended).
         // Leave empty to use localStorage only (per-browser).
@@ -1022,12 +1060,72 @@
             if (e.key === 'Enter') attemptPinUnlock();
         });
 
+        // ==================== PORTAL VIEW-ONLY PIN SYSTEM ====================
+        function openPortalPinModal() {
+            document.getElementById('portalPinModal').classList.add('active');
+            document.getElementById('portalPinError').style.display = 'none';
+            const input = document.getElementById('portalPinInput');
+            input.value = '';
+            input.focus();
+        }
+
+        function closePortalPinModal() {
+            document.getElementById('portalPinModal').classList.remove('active');
+            document.getElementById('portalPinInput').value = '';
+            document.getElementById('portalPinError').style.display = 'none';
+        }
+
+        function attemptPortalPinUnlock() {
+            const entered = document.getElementById('portalPinInput').value.trim();
+            if (entered === PORTAL_PIN) {
+                sessionStorage.setItem('portalUnlocked', 'true');
+                showPortalContent();
+                closePortalPinModal();
+            } else {
+                document.getElementById('portalPinError').style.display = 'block';
+                document.getElementById('portalPinInput').value = '';
+                document.getElementById('portalPinInput').focus();
+            }
+        }
+
+        document.getElementById('portalPinInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') attemptPortalPinUnlock();
+        });
+
+        // Reveals the portal document view. This ONLY toggles visibility —
+        // it never touches setReadOnlyMode, so edit controls (Add Document,
+        // delete buttons, contenteditable, image upload) stay hidden unless
+        // the site is also in full editor mode.
+        function showPortalContent() {
+            document.getElementById('portalLocked').style.display = 'none';
+            document.getElementById('portalUnlocked').style.display = 'block';
+            // The "Lock Portal" button only makes sense for a view-only unlock;
+            // editors manage access via the main editor lock instead.
+            const lockBtn = document.getElementById('portalLockBtn');
+            if (lockBtn) lockBtn.style.display = (sessionStorage.getItem('editorUnlocked') === 'true') ? 'none' : 'inline-flex';
+        }
+
+        function hidePortalContent() {
+            document.getElementById('portalLocked').style.display = 'block';
+            document.getElementById('portalUnlocked').style.display = 'none';
+        }
+
+        // Re-locks view-only portal access. If the full editor is still
+        // unlocked, the portal stays visible (editors always have access).
+        function lockPortalView() {
+            sessionStorage.removeItem('portalUnlocked');
+            if (sessionStorage.getItem('editorUnlocked') === 'true') {
+                showPortalContent();
+            } else {
+                hidePortalContent();
+            }
+        }
+
         function unlockEditor() {
             sessionStorage.setItem('editorUnlocked', 'true');
             setReadOnlyMode(false);
             renderEditorBadge();
-            document.getElementById('portalLocked').style.display = 'none';
-            document.getElementById('portalUnlocked').style.display = 'block';
+            showPortalContent();
             bindEditListeners();
         }
 
@@ -1035,8 +1133,12 @@
             sessionStorage.removeItem('editorUnlocked');
             setReadOnlyMode(true);
             renderEditorBadge();
-            document.getElementById('portalLocked').style.display = 'block';
-            document.getElementById('portalUnlocked').style.display = 'none';
+            // Portal view stays open only if it was separately unlocked with the portal PIN.
+            if (sessionStorage.getItem('portalUnlocked') === 'true') {
+                showPortalContent();
+            } else {
+                hidePortalContent();
+            }
         }
 
         function renderEditorBadge() {
@@ -1142,7 +1244,8 @@
                 tow: getCardData('towGrid'),
                 memberships: getCardData('membershipGrid'),
                 race: getCardData('raceGrid'),
-                pricing: getPricingData()
+                pricing: getPricingData(),
+                portal: getCardData('portalGrid')
             };
         }
 
@@ -1214,8 +1317,8 @@
             }
 
             // Card grids
-            ['roster', 'tow', 'memberships', 'race'].forEach(key => {
-                const map = { roster: 'rosterGrid', tow: 'towGrid', memberships: 'membershipGrid', race: 'raceGrid' };
+            ['roster', 'tow', 'memberships', 'race', 'portal'].forEach(key => {
+                const map = { roster: 'rosterGrid', tow: 'towGrid', memberships: 'membershipGrid', race: 'raceGrid', portal: 'portalGrid' };
                 const id = map[key];
                 if (Array.isArray(state[key]) && id) {
                     document.getElementById(id).innerHTML = state[key].map(item => buildCardHTML(item, isReadOnly)).join('');
@@ -1267,7 +1370,8 @@
                 try {
                     // Strip images for a tiny localStorage fallback
                     const slim = { ...state, heroBackground: '', roster: (state.roster||[]).map(c => ({...c, image:''})),
-                        tow: (state.tow||[]).map(c => ({...c, image:''})), race: (state.race||[]).map(c => ({...c, image:''})) };
+                        tow: (state.tow||[]).map(c => ({...c, image:''})), race: (state.race||[]).map(c => ({...c, image:''})),
+                        portal: (state.portal||[]).map(c => ({...c, image:''})) };
                     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(slim));
                     localOk = true;
                 } catch (e2) {
@@ -1531,6 +1635,9 @@
             } else {
                 setReadOnlyMode(true);
                 renderEditorBadge();
+                if (sessionStorage.getItem('portalUnlocked') === 'true') {
+                    showPortalContent();
+                }
             }
         });
     </script>

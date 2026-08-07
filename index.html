@@ -558,6 +558,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            margin-bottom: 30px;
             background: var(--bg-metallic);
         }
 
@@ -912,9 +913,12 @@
         <section id="tab-pricing" class="tab-content">
             <div class="tab-header">
                 <h2 class="tab-title">SERVICE & SHOP PRICING</h2>
-                <button class="btn edit-control" onclick="addTableRow('pricingTable')"><i class="fa-solid fa-plus"></i> Add Row</button>
             </div>
-            <h3 style="font-family: 'Bebas Neue'; color: var(--accent-cream); font-size: 1.5rem; margin-top: 15px;">Tow & Recovery Rates</h3>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                <h3 style="font-family: 'Bebas Neue'; color: var(--accent-cream); font-size: 1.5rem;">Tow & Recovery Rates</h3>
+                <button class="btn edit-control" onclick="addTableRow('pricingTable')"><i class="fa-solid fa-plus"></i> Add Tow Rate</button>
+            </div>
             <table class="data-table" id="pricingTable">
                 <thead>
                     <tr>
@@ -935,6 +939,29 @@
                         <td class="edit-protected">Off-Road / Heavy Winch Recovery</td>
                         <td class="edit-protected">$1,200</td>
                         <td class="edit-protected">Includes difficult terrain extraction</td>
+                        <td class="edit-control"><button class="btn btn-danger" style="padding: 2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px;">
+                <h3 style="font-family: 'Bebas Neue'; color: var(--accent-cream); font-size: 1.5rem;">Shop & Mechanic Pricing</h3>
+                <button class="btn edit-control" onclick="addTableRow('shopPricingTable')"><i class="fa-solid fa-plus"></i> Add Shop Rate</button>
+            </div>
+            <table class="data-table" id="shopPricingTable">
+                <thead>
+                    <tr>
+                        <th>Service Description</th>
+                        <th>Standard Rate</th>
+                        <th>Notes / Discounts</th>
+                        <th class="edit-control">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="edit-protected">Shop Repairs</td>
+                        <td class="edit-protected">Varies</td>
+                        <td class="edit-protected">Covered under membership programs (e.g., Outlaw Club Pass grants 15% off all shop repairs)</td>
                         <td class="edit-control"><button class="btn btn-danger" style="padding: 2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 </tbody>
@@ -1398,8 +1425,8 @@
             });
         }
 
-        function getPricingData() {
-            const tbody = document.querySelector('#pricingTable tbody');
+        function getPricingTableData(tableId) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
             if (!tbody) return [];
             return Array.from(tbody.querySelectorAll('tr')).map(row => {
                 const cells = row.querySelectorAll('td.edit-protected');
@@ -1433,7 +1460,8 @@
                 tow: getCardData('towGrid'),
                 memberships: getCardData('membershipGrid'),
                 race: getCardData('raceGrid'),
-                pricing: getPricingData(),
+                pricing: getPricingTableData('pricingTable'),
+                shopPricing: getPricingTableData('shopPricingTable'),
                 portal: getCardData('portalGrid')
             };
         }
@@ -1557,6 +1585,19 @@
             `;
         }
 
+        function renderTableRows(tableId, dataArray, isReadOnly) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            if (!tbody) return;
+            tbody.innerHTML = dataArray.map(row => `
+                <tr>
+                    <td class="edit-protected" contenteditable="${!isReadOnly}">${row.service || ''}</td>
+                    <td class="edit-protected" contenteditable="${!isReadOnly}">${row.rate || ''}</td>
+                    <td class="edit-protected" contenteditable="${!isReadOnly}">${row.notes || ''}</td>
+                    <td class="edit-control"><button class="btn btn-danger" style="padding:2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
         function applyState(state) {
             if (!state) return;
             isApplyingState = true;
@@ -1616,17 +1657,12 @@
                 }
             });
 
-            // Pricing table
+            // Pricing tables
             if (Array.isArray(state.pricing)) {
-                const tbody = document.querySelector('#pricingTable tbody');
-                tbody.innerHTML = state.pricing.map(row => `
-                    <tr>
-                        <td class="edit-protected" contenteditable="${!isReadOnly}">${row.service || ''}</td>
-                        <td class="edit-protected" contenteditable="${!isReadOnly}">${row.rate || ''}</td>
-                        <td class="edit-protected" contenteditable="${!isReadOnly}">${row.notes || ''}</td>
-                        <td class="edit-control"><button class="btn btn-danger" style="padding:2px 8px;" onclick="removeTableRow(this)"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `).join('');
+                renderTableRows('pricingTable', state.pricing, isReadOnly);
+            }
+            if (Array.isArray(state.shopPricing)) {
+                renderTableRows('shopPricingTable', state.shopPricing, isReadOnly);
             }
 
             if (!isReadOnly) {

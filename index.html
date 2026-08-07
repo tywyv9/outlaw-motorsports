@@ -21,6 +21,12 @@
             --text-light: #f5f0e6;
             --text-muted: #a8a29e;
             --border-color: #3f2a2a;
+            
+            /* Status Colors */
+            --status-active: #16a34a;
+            --status-loa: #ca8a04;
+            --status-inactive: #dc2626;
+            --status-suspended: #991b1b;
         }
 
         * {
@@ -287,8 +293,24 @@
         body.read-only .card-delete-btn,
         body.read-only .upload-btn-wrapper,
         body.read-only .status-controls,
-        body.read-only .bg-change-btn {
+        body.read-only .bg-change-btn,
+        body.read-only .card-drag-handle {
             display: none !important;
+        }
+
+        body.read-only input[type="date"],
+        body.read-only select,
+        body.read-only textarea {
+            pointer-events: none;
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-light) !important;
+            appearance: none;
+            padding: 0;
+        }
+
+        body.read-only input[type="checkbox"] {
+            pointer-events: none;
         }
 
         .btn {
@@ -334,7 +356,7 @@
         /* GRID CARDS */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
@@ -347,6 +369,26 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--accent-red);
+        }
+
+        .card-drag-handle {
+            position: absolute;
+            top: 10px;
+            left: 45px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: grab;
+            z-index: 5;
+            font-size: 0.8rem;
         }
 
         .card-img-container {
@@ -364,13 +406,15 @@
         .card-body {
             padding: 15px;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .card-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: 1.5rem;
             color: #fff;
-            margin-bottom: 5px;
         }
 
         .card-subtitle {
@@ -378,13 +422,102 @@
             font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
-            margin-bottom: 10px;
         }
 
         .card-text {
             color: var(--text-muted);
             font-size: 0.9rem;
             line-height: 1.4;
+        }
+
+        /* EMPLOYEE FORM FIELDS */
+        .emp-section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            color: var(--accent-red);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2px;
+            margin-top: 5px;
+        }
+
+        .emp-dates-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .emp-field {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .emp-field label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        .emp-field input, .emp-field select, .emp-field textarea {
+            background: var(--bg-matte);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 6px 8px;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .emp-field input:focus, .emp-field select:focus, .emp-field textarea:focus {
+            border-color: var(--accent-red);
+        }
+
+        /* DYNAMIC STATUS BADGE SELECTS */
+        .status-select-active {
+            background-color: var(--status-active) !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+        .status-select-loa {
+            background-color: var(--status-loa) !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+        .status-select-inactive {
+            background-color: var(--status-inactive) !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+        .status-select-suspended {
+            background-color: var(--status-suspended) !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .cert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .cert-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .cert-option input[type="checkbox"] {
+            accent-color: var(--accent-red);
+            cursor: pointer;
         }
 
         .upload-btn-wrapper {
@@ -746,21 +879,10 @@
         <section id="tab-roster" class="tab-content">
             <div class="tab-header">
                 <h2 class="tab-title">EMPLOYEE ROSTER</h2>
-                <button class="btn edit-control" onclick="addCard('rosterGrid', 'Employee Name', 'Title / Rank', 'Contact details or callsign...')"><i class="fa-solid fa-plus"></i> Add Staff</button>
+                <button class="btn edit-control" onclick="addEmployeeCard()"><i class="fa-solid fa-user-plus"></i> Add Employee</button>
             </div>
             <div class="grid-container" id="rosterGrid">
-                <div class="card">
-                    <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
-                    <div class="card-img-container">
-                        <i class="fa-solid fa-user-gear fa-3x" style="color: #333;"></i>
-                        <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-title edit-protected">Jax "Wrench" Reed</div>
-                        <div class="card-subtitle edit-protected">Owner / Head Mechanic</div>
-                        <div class="card-text edit-protected">Specializes in heavy engine tuning and fleet operations. Phone: 555-0192</div>
-                    </div>
-                </div>
+                <!-- Employee Cards Render Dynamically -->
             </div>
         </section>
 
@@ -950,18 +1072,9 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // ==================== CONFIG ====================
-        // Editor PIN — unlocks full site editing (add/edit/delete everywhere, including the portal)
         const STAFF_PIN = "4242026";
-
-        // Employee Portal PIN — view-only access to the portal's internal documents.
-        // Does NOT grant editing rights; only the editor PIN above can add/edit/delete documents.
         const PORTAL_PIN = "1738";
 
-        // Remote shared storage (Cloudflare Worker + KV recommended).
-        // Leave empty to use localStorage only (per-browser).
-        // When set, every visitor loads the same saved state and edits
-        // made while unlocked are pushed so everyone sees them.
-        // Example: "https://outlaw-site-data.yourname.workers.dev"
         const DATA_API_URL = "https://outlaw-site-data.tywyv9.workers.dev/";
 
         const LOCAL_STORAGE_KEY = "outlaw_site_state_v1";
@@ -970,7 +1083,7 @@
         let saveTimer = null;
         let isApplyingState = false;
 
-        // IndexedDB — much larger quota than localStorage (needed for photos)
+        // IndexedDB
         function idbOpen() {
             return new Promise((resolve, reject) => {
                 const req = indexedDB.open(IDB_NAME, 1);
@@ -1092,15 +1205,9 @@
             if (e.key === 'Enter') attemptPortalPinUnlock();
         });
 
-        // Reveals the portal document view. This ONLY toggles visibility —
-        // it never touches setReadOnlyMode, so edit controls (Add Document,
-        // delete buttons, contenteditable, image upload) stay hidden unless
-        // the site is also in full editor mode.
         function showPortalContent() {
             document.getElementById('portalLocked').style.display = 'none';
             document.getElementById('portalUnlocked').style.display = 'block';
-            // The "Lock Portal" button only makes sense for a view-only unlock;
-            // editors manage access via the main editor lock instead.
             const lockBtn = document.getElementById('portalLockBtn');
             if (lockBtn) lockBtn.style.display = (sessionStorage.getItem('editorUnlocked') === 'true') ? 'none' : 'inline-flex';
         }
@@ -1110,8 +1217,6 @@
             document.getElementById('portalUnlocked').style.display = 'none';
         }
 
-        // Re-locks view-only portal access. If the full editor is still
-        // unlocked, the portal stays visible (editors always have access).
         function lockPortalView() {
             sessionStorage.removeItem('portalUnlocked');
             if (sessionStorage.getItem('editorUnlocked') === 'true') {
@@ -1127,18 +1232,19 @@
             renderEditorBadge();
             showPortalContent();
             bindEditListeners();
+            enableDragAndDrop();
         }
 
         function lockEditor() {
             sessionStorage.removeItem('editorUnlocked');
             setReadOnlyMode(true);
             renderEditorBadge();
-            // Portal view stays open only if it was separately unlocked with the portal PIN.
             if (sessionStorage.getItem('portalUnlocked') === 'true') {
                 showPortalContent();
             } else {
                 hidePortalContent();
             }
+            disableDragAndDrop();
         }
 
         function renderEditorBadge() {
@@ -1173,8 +1279,67 @@
             }
         }
 
+        // ==================== DRAG AND DROP (ROSTER CARDS) ====================
+        let draggedCard = null;
+
+        function enableDragAndDrop() {
+            const grid = document.getElementById('rosterGrid');
+            if (!grid) return;
+
+            grid.querySelectorAll('.card').forEach(card => {
+                card.setAttribute('draggable', 'true');
+                card.removeEventListener('dragstart', handleDragStart);
+                card.removeEventListener('dragover', handleDragOver);
+                card.removeEventListener('drop', handleDrop);
+                card.removeEventListener('dragend', handleDragEnd);
+
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('drop', handleDrop);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function disableDragAndDrop() {
+            const grid = document.getElementById('rosterGrid');
+            if (!grid) return;
+            grid.querySelectorAll('.card').forEach(card => card.removeAttribute('draggable'));
+        }
+
+        function handleDragStart(e) {
+            draggedCard = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedCard && draggedCard !== this) {
+                const grid = document.getElementById('rosterGrid');
+                const cards = Array.from(grid.querySelectorAll('.card'));
+                const draggedIdx = cards.indexOf(draggedCard);
+                const targetIdx = cards.indexOf(this);
+
+                if (draggedIdx < targetIdx) {
+                    this.after(draggedCard);
+                } else {
+                    this.before(draggedCard);
+                }
+                scheduleSave();
+            }
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedCard = null;
+        }
+
         // ==================== STATE CAPTURE / APPLY ====================
-        // Reliably extract url(...) value from a CSS background-image string
         function extractBgUrl(bg) {
             if (!bg || bg === 'none') return '';
             const m = String(bg).match(/url\((['"]?)(.*?)\1\)/);
@@ -1191,6 +1356,31 @@
                     title: card.querySelector('.card-title')?.innerHTML || '',
                     subtitle: card.querySelector('.card-subtitle')?.innerHTML || '',
                     text: card.querySelector('.card-text')?.innerHTML || '',
+                    image: imgUrl
+                };
+            });
+        }
+
+        function getRosterData() {
+            const container = document.getElementById('rosterGrid');
+            if (!container) return [];
+            return Array.from(container.querySelectorAll('.card')).map(card => {
+                const imgEl = card.querySelector('.card-img-container');
+                const imgUrl = imgEl ? extractBgUrl(imgEl.style.backgroundImage) : '';
+                const certs = Array.from(card.querySelectorAll('.cert-option input[type="checkbox"]'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                return {
+                    name: card.querySelector('.emp-name')?.innerHTML || '',
+                    title: card.querySelector('.emp-title')?.innerHTML || '',
+                    phone: card.querySelector('.emp-phone')?.innerHTML || '',
+                    hireDate: card.querySelector('.emp-hire-date')?.value || '',
+                    promoDate: card.querySelector('.emp-promo-date')?.value || '',
+                    status: card.querySelector('.emp-status')?.value || 'Active',
+                    strikes: card.querySelector('.emp-strikes')?.value || '0/3',
+                    notes: card.querySelector('.emp-notes')?.value || '',
+                    certs: certs,
                     image: imgUrl
                 };
             });
@@ -1228,11 +1418,10 @@
             else if (statusText.includes('CLOSED')) status = 'closed';
 
             const hero = document.getElementById('heroBanner');
-            // Prefer the live style; fall back to last known good value kept in memory
             const heroUrl = extractBgUrl(hero?.style.backgroundImage || '') || (window.__heroBackground || '');
 
             return {
-                version: 1,
+                version: 2,
                 updatedAt: new Date().toISOString(),
                 status,
                 heroBackground: heroUrl,
@@ -1240,13 +1429,109 @@
                 raceText: document.getElementById('raceEditableText')?.innerHTML || '',
                 contactText: document.getElementById('contactEditableText')?.innerHTML || '',
                 partners: getPartnerData(),
-                roster: getCardData('rosterGrid'),
+                roster: getRosterData(),
                 tow: getCardData('towGrid'),
                 memberships: getCardData('membershipGrid'),
                 race: getCardData('raceGrid'),
                 pricing: getPricingData(),
                 portal: getCardData('portalGrid')
             };
+        }
+
+        function updateStatusColor(selectEl) {
+            selectEl.classList.remove('status-select-active', 'status-select-loa', 'status-select-inactive', 'status-select-suspended');
+            const val = selectEl.value;
+            if (val === 'Active') selectEl.classList.add('status-select-active');
+            else if (val === 'LOA') selectEl.classList.add('status-select-loa');
+            else if (val === 'Inactive') selectEl.classList.add('status-select-inactive');
+            else if (val === 'Suspended') selectEl.classList.add('status-select-suspended');
+        }
+
+        function buildEmployeeCardHTML(emp, isReadOnly) {
+            const hasImg = emp.image && emp.image.length > 10;
+            const bgStyle = hasImg ? `style="background-image:url('${emp.image}')"` : '';
+            const iconDisplay = hasImg ? 'display:none;' : '';
+
+            const certs = emp.certs || [];
+            const towChecked = certs.includes('Tow Certified') ? 'checked' : '';
+            const flatbedChecked = certs.includes('Flatbed Certified') ? 'checked' : '';
+            const heavyChecked = certs.includes('Heavy Duty Certified') ? 'checked' : '';
+            const mechanicChecked = certs.includes('Mechanic Certified') ? 'checked' : '';
+
+            let statusClass = 'status-select-active';
+            if (emp.status === 'LOA') statusClass = 'status-select-loa';
+            else if (emp.status === 'Inactive') statusClass = 'status-select-inactive';
+            else if (emp.status === 'Suspended') statusClass = 'status-select-suspended';
+
+            return `
+                <div class="card" ${!isReadOnly ? 'draggable="true"' : ''}>
+                    <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                    <div class="card-drag-handle" title="Drag to reorder"><i class="fa-solid fa-arrows-up-down-left-right"></i> Move</div>
+                    
+                    <div class="card-img-container" ${bgStyle}>
+                        <i class="fa-solid fa-user-gear fa-3x" style="color:#333;${iconDisplay}"></i>
+                        <div class="upload-btn-wrapper">
+                            <button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button>
+                            <input type="file" accept="image/*" onchange="uploadImage(event, this)">
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div>
+                            <div class="card-title emp-name edit-protected" contenteditable="${!isReadOnly}">${emp.name || 'Jax "Wrench" Reed'}</div>
+                            <div class="card-subtitle emp-title edit-protected" contenteditable="${!isReadOnly}">${emp.title || 'Owner / Head Mechanic'}</div>
+                            <div class="card-text emp-phone edit-protected" contenteditable="${!isReadOnly}">${emp.phone || 'Phone: 555-0192'}</div>
+                        </div>
+
+                        <div class="emp-dates-grid">
+                            <div class="emp-field">
+                                <label>Hire Date</label>
+                                <input type="date" class="emp-hire-date" value="${emp.hireDate || ''}" onchange="scheduleSave()">
+                            </div>
+                            <div class="emp-field">
+                                <label>Promotion Date</label>
+                                <input type="date" class="emp-promo-date" value="${emp.promoDate || ''}" onchange="scheduleSave()">
+                            </div>
+                        </div>
+
+                        <div class="emp-dates-grid">
+                            <div class="emp-field">
+                                <label>Status</label>
+                                <select class="emp-status ${statusClass}" onchange="updateStatusColor(this); scheduleSave();">
+                                    <option value="Active" ${emp.status === 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="LOA" ${emp.status === 'LOA' ? 'selected' : ''}>LOA</option>
+                                    <option value="Inactive" ${emp.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                    <option value="Suspended" ${emp.status === 'Suspended' ? 'selected' : ''}>Suspended</option>
+                                </select>
+                            </div>
+                            <div class="emp-field">
+                                <label>Strikes</label>
+                                <select class="emp-strikes" onchange="scheduleSave()">
+                                    <option value="0/3" ${emp.strikes === '0/3' ? 'selected' : ''}>0/3</option>
+                                    <option value="1/3" ${emp.strikes === '1/3' ? 'selected' : ''}>1/3</option>
+                                    <option value="2/3" ${emp.strikes === '2/3' ? 'selected' : ''}>2/3</option>
+                                    <option value="3/3" ${emp.strikes === '3/3' ? 'selected' : ''}>3/3</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="emp-field">
+                            <label>Certifications</label>
+                            <div class="cert-grid">
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Tow Certified" ${towChecked} onchange="scheduleSave()"> Tow</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Flatbed Certified" ${flatbedChecked} onchange="scheduleSave()"> Flatbed</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Heavy Duty Certified" ${heavyChecked} onchange="scheduleSave()"> Heavy Duty</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Mechanic Certified" ${mechanicChecked} onchange="scheduleSave()"> Mechanic</label>
+                            </div>
+                        </div>
+
+                        <div class="emp-field">
+                            <label>Notes</label>
+                            <textarea class="emp-notes" rows="2" placeholder="Internal staff notes..." oninput="scheduleSave()">${emp.notes || ''}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function buildCardHTML(item, isReadOnly) {
@@ -1283,7 +1568,6 @@
             if (state.heroBackground) {
                 window.__heroBackground = state.heroBackground;
                 const hero = document.getElementById('heroBanner');
-                // Set full background so CSS shorthand doesn't wipe the image
                 hero.style.background = `center / cover no-repeat url("${state.heroBackground}")`;
                 hero.style.backgroundColor = '#1e1e1e';
             }
@@ -1304,6 +1588,13 @@
 
             const isReadOnly = document.body.classList.contains('read-only');
 
+            // Roster Cards
+            if (Array.isArray(state.roster)) {
+                const rosterGrid = document.getElementById('rosterGrid');
+                rosterGrid.innerHTML = state.roster.map(emp => buildEmployeeCardHTML(emp, isReadOnly)).join('');
+                if (!isReadOnly) enableDragAndDrop();
+            }
+
             // Partners
             if (Array.isArray(state.partners)) {
                 const grid = document.getElementById('partnersGrid');
@@ -1316,9 +1607,9 @@
                 `).join('');
             }
 
-            // Card grids
-            ['roster', 'tow', 'memberships', 'race', 'portal'].forEach(key => {
-                const map = { roster: 'rosterGrid', tow: 'towGrid', memberships: 'membershipGrid', race: 'raceGrid', portal: 'portalGrid' };
+            // Standard Card grids
+            ['tow', 'memberships', 'race', 'portal'].forEach(key => {
+                const map = { tow: 'towGrid', memberships: 'membershipGrid', race: 'raceGrid', portal: 'portalGrid' };
                 const id = map[key];
                 if (Array.isArray(state[key]) && id) {
                     document.getElementById(id).innerHTML = state[key].map(item => buildCardHTML(item, isReadOnly)).join('');
@@ -1338,7 +1629,6 @@
                 `).join('');
             }
 
-            // Re-apply contenteditable if unlocked
             if (!isReadOnly) {
                 document.querySelectorAll('.edit-protected').forEach(el => el.setAttribute('contenteditable', 'true'));
                 bindEditListeners();
@@ -1360,7 +1650,6 @@
             const state = captureState();
             const payload = JSON.stringify(state);
 
-            // Prefer IndexedDB (handles large photos). Fall back to localStorage for text-only.
             let localOk = false;
             try {
                 await idbSet(LOCAL_STORAGE_KEY, state);
@@ -1368,7 +1657,6 @@
             } catch (e) {
                 console.warn('IndexedDB save failed', e);
                 try {
-                    // Strip images for a tiny localStorage fallback
                     const slim = { ...state, heroBackground: '', roster: (state.roster||[]).map(c => ({...c, image:''})),
                         tow: (state.tow||[]).map(c => ({...c, image:''})), race: (state.race||[]).map(c => ({...c, image:''})),
                         portal: (state.portal||[]).map(c => ({...c, image:''})) };
@@ -1379,7 +1667,6 @@
                 }
             }
 
-            // Push full state (with images) to shared remote store
             let remoteOk = !DATA_API_URL;
             if (DATA_API_URL) {
                 try {
@@ -1405,13 +1692,11 @@
         async function loadState() {
             let state = null;
 
-            // Prefer remote shared state (same for every visitor)
             if (DATA_API_URL) {
                 try {
                     const res = await fetch(DATA_API_URL + (DATA_API_URL.includes('?') ? '&' : '?') + 't=' + Date.now());
                     if (res.ok) {
                         const data = await res.json();
-                        // Ignore empty / reset payloads
                         if (data && data.version && !data.reset) state = data;
                     }
                 } catch (e) {
@@ -1419,7 +1704,6 @@
                 }
             }
 
-            // Fallback: IndexedDB, then localStorage
             if (!state) {
                 try {
                     state = await idbGet(LOCAL_STORAGE_KEY);
@@ -1433,6 +1717,13 @@
             }
 
             if (state) applyState(state);
+            else {
+                // Default initial employee card if empty
+                const rosterGrid = document.getElementById('rosterGrid');
+                if (rosterGrid && rosterGrid.children.length === 0) {
+                    addEmployeeCard();
+                }
+            }
         }
 
         function bindEditListeners() {
@@ -1462,6 +1753,34 @@
         }
 
         // ==================== DYNAMIC CARDS ====================
+        function addEmployeeCard() {
+            const rosterGrid = document.getElementById('rosterGrid');
+            if (!rosterGrid) return;
+
+            const isReadOnly = document.body.classList.contains('read-only');
+            const newEmp = {
+                name: 'Employee Name',
+                title: 'Staff Title / Rank',
+                phone: 'Phone: 555-0000',
+                hireDate: '',
+                promoDate: '',
+                status: 'Active',
+                strikes: '0/3',
+                notes: '',
+                certs: [],
+                image: ''
+            };
+
+            const div = document.createElement('div');
+            div.innerHTML = buildEmployeeCardHTML(newEmp, isReadOnly);
+            const cardEl = div.firstElementChild;
+            rosterGrid.appendChild(cardEl);
+
+            if (!isReadOnly) enableDragAndDrop();
+            bindEditListeners();
+            scheduleSave();
+        }
+
         function addCard(containerId, titlePlaceholder, subtitlePlaceholder, textPlaceholder) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -1571,14 +1890,12 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    // Compress hard so remote KV + IndexedDB stay happy
                     const maxW = 900;
                     let w = img.width, h = img.height;
                     if (w > maxW) {
                         h = Math.round(h * (maxW / w));
                         w = maxW;
                     }
-                    // Also cap height for very tall images
                     const maxH = 500;
                     if (h > maxH) {
                         w = Math.round(w * (maxH / h));
@@ -1593,7 +1910,6 @@
                     const hero = document.getElementById('heroBanner');
                     hero.style.background = `center / cover no-repeat url("${dataUrl}")`;
                     hero.style.backgroundColor = '#1e1e1e';
-                    // Force immediate save (don't wait for debounce) so refresh keeps it
                     clearTimeout(saveTimer);
                     persistState();
                 };
@@ -1619,7 +1935,7 @@
                     await fetch(DATA_API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ version: 1, reset: true })
+                        body: JSON.stringify({ version: 2, reset: true })
                     });
                 } catch (e) {}
             }

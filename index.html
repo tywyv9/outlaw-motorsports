@@ -281,6 +281,62 @@
             letter-spacing: 1px;
         }
 
+        /* ANNOUNCEMENTS BOX STYLES */
+        .announcement-box {
+            background: linear-gradient(135deg, rgba(28, 28, 28, 0.9) 0%, rgba(20, 20, 20, 0.95) 100%);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--accent-red);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .announcement-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .announcement-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .announcement-title-group i {
+            color: var(--accent-red);
+            font-size: 1.4rem;
+        }
+
+        .announcement-title-group h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .announcement-badge {
+            background: var(--accent-red);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 3px;
+            letter-spacing: 1px;
+        }
+
+        .announcement-body {
+            color: var(--text-light);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
         /* EDITABLE CONTROLS */
         .edit-protected[contenteditable="true"] {
             outline: 1px dashed var(--accent-cream);
@@ -851,6 +907,23 @@
             <div class="tab-header">
                 <h2 class="tab-title">WELCOME TO OUTLAW MOTORSPORTS & RECOVERY</h2>
             </div>
+
+            <!-- ANNOUNCEMENTS BOX -->
+            <div class="announcement-box">
+                <div class="announcement-header">
+                    <div class="announcement-title-group">
+                        <i class="fa-solid fa-bullhorn"></i>
+                        <h3 id="announcementTitle" class="edit-protected">LATEST ANNOUNCEMENTS</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="announcementBadge" class="announcement-badge edit-protected">NEW UPDATE</span>
+                    </div>
+                </div>
+                <div id="announcementText" class="announcement-body edit-protected">
+                    Welcome to the official Outlaw Motorsports & Recovery homepage! Check back here for updates on shop hours, fleet additions, and motorsports events.
+                </div>
+            </div>
+
             <div id="homeEditableText" class="edit-protected" style="line-height: 1.6; font-size: 1.1rem;">
                 <p style="margin-bottom: 15px;">Whether you're stranded on the highway at 3 AM or looking to gain an edge on the race track, Outlaw Motorsports & Recovery is your primary shop for performance, heavy towing, and custom vehicle builds.</p>
                 <p>We operate fast, hit hard, and build machines that dominate the roads. Explore our services or contact our team directly via our Discord server.</p>
@@ -1452,6 +1525,9 @@
                 updatedAt: new Date().toISOString(),
                 status,
                 heroBackground: heroUrl,
+                announcementTitle: document.getElementById('announcementTitle')?.innerHTML || '',
+                announcementBadge: document.getElementById('announcementBadge')?.innerHTML || '',
+                announcementText: document.getElementById('announcementText')?.innerHTML || '',
                 homeText: document.getElementById('homeEditableText')?.innerHTML || '',
                 raceText: document.getElementById('raceEditableText')?.innerHTML || '',
                 contactText: document.getElementById('contactEditableText')?.innerHTML || '',
@@ -1611,6 +1687,20 @@
                 const hero = document.getElementById('heroBanner');
                 hero.style.background = `center / cover no-repeat url("${state.heroBackground}")`;
                 hero.style.backgroundColor = '#1e1e1e';
+            }
+
+            // Announcement Box
+            if (state.announcementTitle != null) {
+                const el = document.getElementById('announcementTitle');
+                if (el) el.innerHTML = state.announcementTitle;
+            }
+            if (state.announcementBadge != null) {
+                const el = document.getElementById('announcementBadge');
+                if (el) el.innerHTML = state.announcementBadge;
+            }
+            if (state.announcementText != null) {
+                const el = document.getElementById('announcementText');
+                if (el) el.innerHTML = state.announcementText;
             }
 
             // Text blocks

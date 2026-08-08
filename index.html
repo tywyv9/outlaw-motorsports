@@ -365,8 +365,10 @@
             padding: 0;
         }
 
-        body.read-only input[type="checkbox"] {
+        body.read-only input[type="checkbox"],
+        body.read-only .cert-option {
             pointer-events: none;
+            cursor: default;
         }
 
         .btn {
@@ -868,7 +870,7 @@
         </label>
     </header>
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="nav-container">
             <ul class="nav-links">
@@ -1373,9 +1375,11 @@
             if (isReadOnly) {
                 document.body.classList.add('read-only');
                 document.querySelectorAll('.edit-protected').forEach(el => el.removeAttribute('contenteditable'));
+                document.querySelectorAll('.emp-cert').forEach(el => el.disabled = true);
             } else {
                 document.body.classList.remove('read-only');
                 document.querySelectorAll('.edit-protected').forEach(el => el.setAttribute('contenteditable', 'true'));
+                document.querySelectorAll('.emp-cert').forEach(el => el.disabled = false);
             }
         }
 
@@ -1561,6 +1565,7 @@
             const flatbedChecked = certs.includes('Flatbed Certified') ? 'checked' : '';
             const heavyChecked = certs.includes('Heavy Duty Certified') ? 'checked' : '';
             const mechanicChecked = certs.includes('Mechanic Certified') ? 'checked' : '';
+            const disabledAttr = isReadOnly ? 'disabled' : '';
 
             let statusClass = 'status-select-active';
             if (emp.status === 'LOA') statusClass = 'status-select-loa';
@@ -1622,10 +1627,10 @@
                         <div class="emp-field">
                             <label>Certifications</label>
                             <div class="cert-grid">
-                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Tow Certified" ${towChecked} onchange="scheduleSave()"> Tow</label>
-                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Flatbed Certified" ${flatbedChecked} onchange="scheduleSave()"> Flatbed</label>
-                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Heavy Duty Certified" ${heavyChecked} onchange="scheduleSave()"> Heavy Duty</label>
-                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Mechanic Certified" ${mechanicChecked} onchange="scheduleSave()"> Mechanic</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Tow Certified" ${towChecked} ${disabledAttr} onchange="scheduleSave()"> Tow</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Flatbed Certified" ${flatbedChecked} ${disabledAttr} onchange="scheduleSave()"> Flatbed</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Heavy Duty Certified" ${heavyChecked} ${disabledAttr} onchange="scheduleSave()"> Heavy Duty</label>
+                                <label class="cert-option"><input type="checkbox" class="emp-cert" value="Mechanic Certified" ${mechanicChecked} ${disabledAttr} onchange="scheduleSave()"> Mechanic</label>
                             </div>
                         </div>
 

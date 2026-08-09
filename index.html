@@ -242,6 +242,44 @@
             color: #ff3333;
         }
 
+        .save-changes-btn {
+            background: var(--bg-matte);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            margin-left: 4px;
+        }
+
+        .save-changes-btn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .save-changes-btn.has-unsaved {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+            animation: pulseSaveBtn 1.6s ease-in-out infinite;
+        }
+
+        .save-changes-btn.has-unsaved:hover {
+            background: #d81e1e;
+        }
+
+        @keyframes pulseSaveBtn {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.55); }
+            50% { box-shadow: 0 0 0 7px rgba(185, 28, 28, 0); }
+        }
+
         /* MAIN CONTENT AREA */
         .main-container {
             max-width: 1300px;
@@ -1190,7 +1228,6 @@
         const LOCAL_STORAGE_KEY = "outlaw_site_state_v1";
         const IDB_NAME = "outlaw_motorsports";
         const IDB_STORE = "site_state";
-        let saveTimer = null;
         let isApplyingState = false;
 
         // IndexedDB
@@ -1340,12 +1377,24 @@
             sessionStorage.setItem('editorUnlocked', 'true');
             setReadOnlyMode(false);
             renderEditorBadge();
+            updateSaveButtonState();
             showPortalContent();
             bindEditListeners();
             enableDragAndDrop();
         }
 
         function lockEditor() {
+            if (hasUnsavedChanges) {
+                const shouldSave = confirm('You have unsaved changes that other viewers can\'t see yet. Click OK to save them now before locking, or Cancel to lock without saving (your edits will stay only in this browser until saved).');
+                if (shouldSave) {
+                    saveChanges().then(finishLockEditor);
+                    return;
+                }
+            }
+            finishLockEditor();
+        }
+
+        function finishLockEditor() {
             sessionStorage.removeItem('editorUnlocked');
             setReadOnlyMode(true);
             renderEditorBadge();
@@ -1367,6 +1416,9 @@
                         <i class="fa-solid fa-pen-to-square" style="color: var(--accent-red);"></i>
                         <span>Editor Mode</span>
                         <span class="role-badge">Unlocked</span>
+                        <button id="saveChangesBtn" class="save-changes-btn" onclick="saveChanges()" title="Save changes for all viewers">
+                            <i class="fa-solid fa-check"></i> Saved
+                        </button>
                         <button class="lock-btn" onclick="lockEditor()" title="Lock Editor"><i class="fa-solid fa-lock"></i></button>
                     </div>
                 `;
@@ -1777,11 +1829,48 @@
         }
 
         // ==================== SAVE / LOAD ====================
+        // Editing no longer auto-saves. Every edit just marks the page as
+        // "dirty"; nothing is written to IndexedDB/localStorage/the remote
+        // Worker (and therefore nothing is visible to other viewers) until
+        // the editor explicitly clicks the Save Changes button.
+        let hasUnsavedChanges = false;
+
         function scheduleSave() {
+            markDirty();
+        }
+
+        function markDirty() {
             if (isApplyingState) return;
             if (sessionStorage.getItem('editorUnlocked') !== 'true') return;
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(persistState, 400);
+            hasUnsavedChanges = true;
+            updateSaveButtonState();
+        }
+
+        function updateSaveButtonState(saving) {
+            const btn = document.getElementById('saveChangesBtn');
+            if (!btn) return;
+            if (saving) {
+                btn.disabled = true;
+                btn.classList.remove('has-unsaved');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            } else if (hasUnsavedChanges) {
+                btn.disabled = false;
+                btn.classList.add('has-unsaved');
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('has-unsaved');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved';
+            }
+        }
+
+        // Explicit save action, triggered only by clicking the Save Changes button.
+        async function saveChanges() {
+            if (!hasUnsavedChanges) return;
+            updateSaveButtonState(true);
+            await persistState();
+            hasUnsavedChanges = false;
+            updateSaveButtonState();
         }
 
         async function persistState() {
@@ -2014,8 +2103,7 @@
                     imgContainer.style.backgroundImage = `url("${dataUrl}")`;
                     const icon = imgContainer.querySelector('i.fa-3x');
                     if (icon) icon.style.display = 'none';
-                    clearTimeout(saveTimer);
-                    persistState();
+                    markDirty();
                 };
                 img.src = e.target.result;
             };
@@ -2049,8 +2137,7 @@
                     const hero = document.getElementById('heroBanner');
                     hero.style.background = `center / cover no-repeat url("${dataUrl}")`;
                     hero.style.backgroundColor = '#1e1e1e';
-                    clearTimeout(saveTimer);
-                    persistState();
+                    markDirty();
                 };
                 img.src = event.target.result;
             };
@@ -2080,6 +2167,13 @@
             }
             location.reload();
         }
+
+        window.addEventListener('beforeunload', function(e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
 
         // ==================== INIT ====================
         window.addEventListener('DOMContentLoaded', async function() {

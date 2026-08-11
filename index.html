@@ -1122,11 +1122,15 @@
         <section id="tab-memberships" class="tab-content">
             <div class="tab-header">
                 <h2 class="tab-title">DISCOUNTS & MEMBERSHIPS</h2>
-                <button class="btn edit-control" onclick="addCard('membershipGrid', 'Membership Tier', 'Discount Rate', 'Perks and requirements...', false)"><i class="fa-solid fa-plus"></i> Add Tier</button>
+                <button class="btn edit-control" onclick="addCard('membershipGrid', 'Membership Tier', 'Discount Rate', 'Perks and requirements...', true)"><i class="fa-solid fa-plus"></i> Add Tier</button>
             </div>
             <div class="grid-container" id="membershipGrid">
                 <div class="card">
                     <button class="card-delete-btn" onclick="removeCard(this)"><i class="fa-solid fa-trash"></i></button>
+                    <div class="card-img-container">
+                        <i class="fa-solid fa-id-card fa-3x" style="color: #333;"></i>
+                        <div class="upload-btn-wrapper"><button class="btn btn-secondary"><i class="fa-solid fa-camera"></i></button><input type="file" accept="image/*" onchange="uploadImage(event, this)"></div>
+                    </div>
                     <div class="card-body">
                         <div class="card-title edit-protected">Outlaw Club Pass</div>
                         <div class="card-subtitle edit-protected">15% Off All Shop Repairs</div>
@@ -2100,6 +2104,11 @@
  
         function removeCard(btn) {
             btn.closest('.card, .partner-card').remove();
+            scheduleSave();
+        }
+ 
+        function removeTableRow(btn) {
+            btn.closest('tr').remove();
             scheduleSave();
         }
  
